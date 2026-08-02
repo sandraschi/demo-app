@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "demo-app",
+  "version": "0.1.0",
+  "identifier": "ai.fleet.demo_app",
+  "build": {
+    "frontendDist": "../webapp/dist",
+    "devUrl": "http://localhost:11141",
+    "beforeDevCommand": "bun --prefix ../webapp run dev",
+    "beforeBuildCommand": "bun --prefix ../webapp install && bun --prefix ../webapp run build"
+  },
+  "app": {
+    "windows": [{
+      "label": "main",
+      "title": "demo-app",
+      "width": 1100,
+      "height": 750,
+      "minWidth": 700,
+      "minHeight": 500
+    }],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/icon.ico", "icons/icon.png"],
+    "resources": ["resources/.env.example"],
+    "windows": {
+      "webviewInstallMode": { "type": "skip" },
+      "nsis": { "installMode": "currentUser" }
+    }
+  }
+}

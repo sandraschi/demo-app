@@ -1,0 +1,12 @@
+# demo-app
+
+SOTA demo fullstack app - fleet MCP hookups, scheduler, robot patrols, roster, shop
+
+## Links
+
+- llms-full.txt: ./llms-full.txt
+- Source: ./src/demo_app/
+
+## Quick start
+
+uv sync && bun --prefix webapp install && ./start.ps1
