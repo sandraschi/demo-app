@@ -1,0 +1,5 @@
+"Entry: python -m demo_app."
+from demo_app.server import main
+
+if __name__ == "__main__":
+    main()
