@@ -20,10 +20,8 @@ test:
     uv run pytest tests/ -q
 
 e2e:
-    Set-Location webapp
-    npx playwright test
+    Set-Location webapp; npx playwright test
 
 bootstrap:
     uv sync
-    Set-Location webapp
-    bun install
+    Set-Location webapp; bun install
