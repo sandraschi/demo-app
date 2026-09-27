@@ -6,7 +6,7 @@ mcp-stdio:
     uv run demo_app-server
 
 dev:
-    pwsh -NoProfile -File start.ps1
+    powershell.exe -NoProfile -File start.ps1
 
 lint:
     uv run ruff check .
