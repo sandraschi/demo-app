@@ -70,9 +70,7 @@ def add_member(name: str, email: str, role: str = "member") -> dict:
             "INSERT INTO members (name, email, role) VALUES (?, ?, ?)",
             (name, email, role),
         )
-        row = conn.execute(
-            "SELECT * FROM members WHERE id = ?", (cur.lastrowid,)
-        ).fetchone()
+        row = conn.execute("SELECT * FROM members WHERE id = ?", (cur.lastrowid,)).fetchone()
     return dict(row)
 
 
@@ -94,7 +92,5 @@ def create_order(items: str, total_cents: int) -> dict:
             "INSERT INTO orders (items, total_cents) VALUES (?, ?)",
             (items, total_cents),
         )
-        row = conn.execute(
-            "SELECT * FROM orders WHERE id = ?", (cur.lastrowid,)
-        ).fetchone()
+        row = conn.execute("SELECT * FROM orders WHERE id = ?", (cur.lastrowid,)).fetchone()
     return dict(row)

@@ -150,14 +150,22 @@ _LOG_RING: deque[dict] = deque(maxlen=200)
 
 def ring_log(source: str, level: str, message: str) -> None:
     _LOG_RING.appendleft(
-        {"ts": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
-         "source": source, "level": level, "message": message}
+        {
+            "ts": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
+            "source": source,
+            "level": level,
+            "message": message,
+        }
     )
 
 
 @app.get("/api/logs")
 async def api_logs(limit: int = 50) -> dict[str, Any]:
-    return {"success": True, "entries": list(_LOG_RING)[:limit], "count": min(limit, len(_LOG_RING))}
+    return {
+        "success": True,
+        "entries": list(_LOG_RING)[:limit],
+        "count": min(limit, len(_LOG_RING)),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -219,7 +227,6 @@ if os.environ.get("ENABLE_SCHEDULER", "1") == "1":
     _JOBS: dict[str, dict] = {}
     _scheduler = BackgroundScheduler()
 
-
     def _patrol_tick() -> None:
         _JOBS["patrol"] = {
             "name": "patrol",
@@ -229,20 +236,21 @@ if os.environ.get("ENABLE_SCHEDULER", "1") == "1":
         }
         ring_log("scheduler", "INFO", "patrol tick")
 
-
     _scheduler.add_job(_patrol_tick, "interval", minutes=5, id="patrol")
     _scheduler.start()
     ring_log("scheduler", "INFO", "scheduler started")
 
-
     @app.get("/api/jobs")
     async def api_jobs() -> dict[str, Any]:
         jobs = [
-            {"id": j.id, "next_run": str(j.next_run_time or ""), "enabled": not j.next_run_time is None}
+            {
+                "id": j.id,
+                "next_run": str(j.next_run_time or ""),
+                "enabled": j.next_run_time is not None,
+            }
             for j in _scheduler.get_jobs()
         ]
         return {"success": True, "jobs": jobs, "runs": _JOBS}
-
 
     @app.post("/api/jobs/{job_id}/run")
     async def run_job(job_id: str) -> dict[str, Any]:
@@ -250,7 +258,6 @@ if os.environ.get("ENABLE_SCHEDULER", "1") == "1":
             _patrol_tick()
             return {"success": True, "message": "patrol dispatched"}
         return {"success": False, "error": f"unknown job: {job_id}"}
-
 
     @app.on_event("shutdown")
     async def _stop_scheduler() -> None:
@@ -270,12 +277,15 @@ if os.environ.get("ENABLE_UPLOAD", "0") == "1":
     async def upload(file: Any = None) -> dict[str, Any]:
         return {"success": False, "error": "multipart body expected"}
 
+
 if os.environ.get("ENABLE_EMAIL", "0") == "1":
+
     @app.post("/api/contact")
     async def contact(subject: str = "", body: str = "") -> dict[str, Any]:
         if not subject or not body:
             return {"success": False, "error": "subject and body required"}
         return {"success": True, "message": "email queued (configure SMTP in .env)"}
+
 
 if os.environ.get("ENABLE_REALTIME", "0") == "1":
     from fastapi import WebSocket
